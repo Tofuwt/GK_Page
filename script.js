@@ -1,44 +1,34 @@
-const gloves = [
-  {
-    brand: "Nike",
-    model: "Vapor Grip 3",
-    rating: 4.5,
-    reviews: [
-      "Great grip in wet conditions.",
-      "A bit tight but very responsive."
-    ]
-  },
-  {
-    brand: "Adidas",
-    model: "Predator Pro",
-    rating: 4.0,
-    reviews: [
-      "Comfortable fit, solid durability.",
-      "Grip fades after heavy use."
-    ]
-  },
-  {
-    brand: "Uhlsport",
-    model: "Hyperact Supergrip+",
-    rating: 5.0,
-    reviews: [
-      "Best grip I've ever used.",
-      "Expensive but worth it."
-    ]
-  }
+<script>
+const gloves=[
+{brand:'Nike',model:'Vapor Grip 3',rating:4.6},
+{brand:'Adidas',model:'Predator Pro',rating:4.2},
+{brand:'Uhlsport',model:'Hyperact',rating:4.8},
+{brand:'Nike',model:'Phantom Shadow',rating:3.9}
 ];
 
-const gloveList = document.getElementById("glove-list");
 
-gloves.forEach(glove => {
-  const card = document.createElement("div");
-  card.className = "glove-card";
+const grid=document.getElementById('gloveGrid');
+const brandFilter=document.getElementById('brandFilter');
+const ratingFilter=document.getElementById('ratingFilter');
 
-  card.innerHTML = `
-    <h2>${glove.brand} ${glove.model}</h2>
-    <div class="rating">${"⭐".repeat(Math.round(glove.rating))}</div>
-    ${glove.reviews.map(r => `<div class="review">"${r}"</div>`).join("")}
-  `;
 
-  gloveList.appendChild(card);
+function render(){
+if(!grid) return;
+grid.innerHTML='';
+const brand=brandFilter.value;
+const rating=ratingFilter.value;
+
+
+gloves.filter(g=>{
+return (brand==='all'||g.brand===brand) && (rating==='all'||g.rating>=rating);
+}).forEach(g=>{
+const card=document.createElement('div');
+card.className='card';
+card.innerHTML=`<h3>${g.brand} ${g.model}</h3><div class='rating'>★★★★★ ${g.rating}</div><div class='meta'>Placeholder review data</div>`;
+grid.appendChild(card);
 });
+}
+
+
+if(brandFilter){brandFilter.onchange=render;ratingFilter.onchange=render;render();}
+</script>
