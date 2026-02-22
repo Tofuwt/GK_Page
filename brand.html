@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Brand · GK Glove Reviews</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header>
+<div class="nav">
+<div class="logo">GK Glove Reviews</div>
+<nav>
+<a href="index.html">Home</a>
+<a href="browse.html">Browse</a>
+<a href="rankings.html">Rankings</a>
+<a href="about.html">About</a>
+</nav>
+</div>
+</header>
+
+<section class="content">
+<div class="back-link"><a href="brands.html">← Back to All Brands</a></div>
+<h2 id="brandTitle"></h2>
+<div id="gloveGrid" class="grid"></div>
+</section>
+
+<footer>
+<div class="footer-inner">
+<p class="meta">© 2026 GK Glove Reviews · <a href="index.html">Home</a> · <a href="about.html">About</a></p>
+</div>
+</footer>
+
+<script>
+const gloves=[
+{id:1,brand:'Nike',model:'Vapor Grip 3',overall:4.6,grip:4.8,durability:4.5,comfort:4.5,price:89.99},
+{id:2,brand:'Adidas',model:'Predator Pro',overall:4.2,grip:4.0,durability:4.3,comfort:4.2,price:94.99},
+{id:3,brand:'Uhlsport',model:'Hyperact',overall:4.8,grip:4.9,durability:4.8,comfort:4.7,price:119.99},
+{id:4,brand:'Nike',model:'Phantom Shadow',overall:3.9,grip:3.8,durability:4.0,comfort:3.9,price:74.99},
+{id:5,brand:'Puma',model:'Future Z Grip 1.2',overall:4.5,grip:4.6,durability:4.4,comfort:4.5,price:84.99},
+{id:6,brand:'Reusch',model:'Attrakt Freegel G3',overall:4.7,grip:4.9,durability:4.6,comfort:4.6,price:139.99},
+{id:7,brand:'Adidas',model:'Predator Match',overall:4.4,grip:4.5,durability:4.3,comfort:4.4,price:79.99},
+{id:8,brand:'Uhlsport',model:'Speed Up Now',overall:4.3,grip:4.4,durability:4.2,comfort:4.3,price:69.99},
+{id:9,brand:'Puma',model:'Ultra Grip 1',overall:4.2,grip:4.3,durability:4.0,comfort:4.2,price:64.99},
+{id:10,brand:'Reusch',model:'Pure Contact Silver',overall:4.6,grip:4.7,durability:4.6,comfort:4.6,price:129.99},
+{id:11,brand:'Nike',model:'Goalkeeper Gloves NK-GK',overall:4.1,grip:4.2,durability:4.0,comfort:4.1,price:59.99},
+{id:12,brand:'Adidas',model:'ACE Pro Manuel Neuer',overall:4.9,grip:5.0,durability:4.8,comfort:4.9,price:159.99},
+{id:13,brand:'Reusch',model:'Attrakt Grip Evolution',overall:4.5,grip:4.6,durability:4.4,comfort:4.5,price:99.99},
+{id:14,brand:'Nike',model:'GK Match',overall:4.3,grip:4.4,durability:4.2,comfort:4.3,price:79.99},
+{id:15,brand:'Puma',model:'evoPOWER 2.2',overall:4.4,grip:4.5,durability:4.3,comfort:4.4,price:94.99},
+{id:16,brand:'Adidas',model:'Predator Elite',overall:4.3,grip:4.4,durability:4.2,comfort:4.3,price:119.99},
+{id:17,brand:'Uhlsport',model:'Dynamic Impulse',overall:4.6,grip:4.7,durability:4.5,comfort:4.6,price:109.99},
+{id:18,brand:'Reusch',model:'Attrakt Solid',overall:4.4,grip:4.5,durability:4.3,comfort:4.4,price:84.99},
+{id:19,brand:'Nike',model:'Premier SGT',overall:4.7,grip:4.8,durability:4.7,comfort:4.7,price:139.99},
+{id:20,brand:'Puma',model:'ultraCEST Pro',overall:4.6,grip:4.7,durability:4.5,comfort:4.6,price:124.99},
+{id:21,brand:'Adidas',model:'Predator Training',overall:4.1,grip:4.2,durability:4.0,comfort:4.1,price:59.99},
+{id:22,brand:'Uhlsport',model:'Eliminator Pro Elite',overall:4.8,grip:4.9,durability:4.8,comfort:4.7,price:149.99},
+{id:23,brand:'Reusch',model:'G3 Fusion',overall:4.8,grip:4.9,durability:4.7,comfort:4.8,price:144.99},
+{id:24,brand:'Nike',model:'Phantom Elite',overall:4.8,grip:4.9,durability:4.8,comfort:4.8,price:149.99},
+{id:25,brand:'Puma',model:'Future Z Grip Elite',overall:4.7,grip:4.8,durability:4.6,comfort:4.7,price:134.99},
+];
+
+const grid=document.getElementById('gloveGrid');
+const brandTitle=document.getElementById('brandTitle');
+
+function renderStars(rating){
+const fullStars=Math.floor(rating);
+const hasHalf=rating%1>=0.5;
+let stars='★'.repeat(fullStars);
+if(hasHalf) stars+='½';
+return stars;
+}
+
+function init(){
+const params=new URLSearchParams(window.location.search);
+const brand=params.get('name');
+
+if(!brand){
+document.body.innerHTML='<p>Brand not found</p>';
+return;
+}
+
+brandTitle.textContent=`${brand} Goalkeeper Gloves`;
+
+const filtered=gloves.filter(g=>g.brand===brand).sort((a,b)=>b.overall-a.overall);
+
+filtered.forEach(g=>{
+const card=document.createElement('div');
+card.className='card';
+card.innerHTML=`
+<h3>${g.brand} ${g.model}</h3>
+<div class='rating'>Overall: ${renderStars(g.overall)} ${g.overall}</div>
+<div class='sub-ratings'>
+<div>Grip: ${renderStars(g.grip)} ${g.grip}</div>
+<div>Durability: ${renderStars(g.durability)} ${g.durability}</div>
+<div>Comfort: ${renderStars(g.comfort)} ${g.comfort}</div>
+</div>
+<div class='price'>$${g.price}</div>
+<a href='glove.html?id=${g.id}' class='card-link'>View Details</a>
+`;
+grid.appendChild(card);
+});
+}
+
+init();
+</script>
+
+<style>
+.back-link{margin-bottom:24px}
+.back-link a{color:var(--accent);text-decoration:none;font-weight:600}
+.back-link a:hover{text-decoration:underline}
+</style>
+</body>
+</html>

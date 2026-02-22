@@ -19,19 +19,24 @@ header{background:#fff;border-bottom:1px solid var(--border)}
 .content{max-width:1100px;margin:auto;padding:40px 24px}
 .section-title{margin-bottom:24px}
 .section-title h2{margin:0 0 24px 0}
+.quick-links{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.quick-link{background:var(--accent);color:#fff;padding:10px 16px;border-radius:10px;text-decoration:none;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:6px;transition:opacity 0.2s}
+.quick-link:hover{opacity:0.9}
 .controls{display:flex;flex-direction:column;gap:16px;margin-bottom:24px}
 #searchInput{padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;width:100%;max-width:300px}
 .filters{display:flex;gap:12px;flex-wrap:wrap}
 .filters select,#searchInput{padding:8px 12px;border-radius:10px;border:1px solid var(--border);font-family:'Inter',sans-serif}
 .filters select:focus,#searchInput:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(37,99,235,0.1)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:box-shadow 0.2s}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:box-shadow 0.2s;display:flex;flex-direction:column}
 .card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.1)}
 .card h3{margin:0 0 12px 0;font-size:16px}
 .rating{color:var(--accent);font-weight:600;margin-bottom:12px;font-size:14px}
 .sub-ratings{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;padding:12px;background:#f9fafb;border-radius:8px;font-size:13px}
 .sub-ratings div{color:var(--muted)}
-.price{font-size:18px;font-weight:700;color:var(--accent)}
+.price{font-size:18px;font-weight:700;color:var(--accent);margin-bottom:12px}
+.card-link{color:var(--accent);text-decoration:none;font-weight:600;font-size:14px;margin-top:auto}
+.card-link:hover{text-decoration:underline}
 .meta{color:var(--muted);font-size:14px}
 footer{border-top:1px solid var(--border);background:#fff;padding:24px;text-align:center}
 footer a{color:var(--accent);text-decoration:none}
