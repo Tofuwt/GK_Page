@@ -16,8 +16,8 @@
 <nav>
 <a href="index.html">Home</a>
 <a href="browse.html">Browse</a>
-<a href="#">Rankings</a>
-<a href="#">About</a>
+<a href="rankings.html">Rankings</a>
+<a href="about.html">About</a>
 </nav>
 </div>
 </header>
@@ -26,17 +26,30 @@
 <section class="content">
 <div class="section-title">
 <h2>Browse Gloves</h2>
+</div>
+<div class="controls">
+<input type="text" id="searchInput" placeholder="Search by brand or model...">
 <div class="filters">
 <select id="brandFilter">
 <option value="all">All Brands</option>
 <option value="Nike">Nike</option>
 <option value="Adidas">Adidas</option>
 <option value="Uhlsport">Uhlsport</option>
+<option value="Puma">Puma</option>
+<option value="Reusch">Reusch</option>
 </select>
 <select id="ratingFilter">
 <option value="all">All Ratings</option>
 <option value="4">4★ & up</option>
+<option value="4.5">4.5★ & up</option>
 <option value="5">5★ only</option>
+</select>
+<select id="sortSelect">
+<option value="">Sort by</option>
+<option value="rating">Highest Rating</option>
+<option value="grip">Best Grip</option>
+<option value="price-low">Price: Low to High</option>
+<option value="price-high">Price: High to Low</option>
 </select>
 </div>
 </div>
@@ -48,7 +61,7 @@
 
 <footer>
 <div class="footer-inner">
-<p class="meta">Static MVP · Filters run fully in the browser</p>
+<p class="meta">© 2026 GK Glove Reviews · <a href="index.html">Home</a> · <a href="about.html">About</a></p>
 </div>
 </footer>
 
