@@ -1,4 +1,3 @@
-<script>
 const gloves=[
 {id:1,brand:'Nike',model:'Vapor Grip 3',overall:4.6,grip:4.8,durability:4.5,comfort:4.5,price:89.99,palm_thickness:'5mm',latex_type:'Synthetic',closure:'Rolled Cuff',weight:'180g',use_cases:['Wet Weather','Training','Match Play'],description:'The Nike Vapor Grip 3 offers excellent grip and comfort for dynamic keepers. Soft palm material provides natural ball feel with reliable contact in wet conditions.',pros:['Excellent grip retention','Comfortable fit','Good durability','Value for money'],cons:['Can compress over time','Latex may wear quickly in training']},
 {id:2,brand:'Adidas',model:'Predator Pro',overall:4.2,grip:4.0,durability:4.3,comfort:4.2,price:94.99,palm_thickness:'4.5mm',latex_type:'Natural',closure:'Velcro Strap',weight:'175g',use_cases:['Match Play','Amateur'],description:'Professional-grade glove with natural latex for authentic grip feel. Designed for keepers who value touch and ball control.',pros:['Natural latex grip','Lightweight','Classic design'],cons:['Latex durability concerns','Lower grip in very wet conditions']},
@@ -88,4 +87,3 @@ if(searchInput) searchInput.oninput=render;
 if(sortSelect) sortSelect.onchange=render;
 render();
 }
-</script>

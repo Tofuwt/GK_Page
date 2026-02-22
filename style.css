@@ -1,4 +1,3 @@
-<style>
 :root {
 --bg:#f7f8fa;--card:#fff;--text:#111827;--muted:#6b7280;--accent:#2563eb;--border:#e5e7eb;--radius:14px;
 }
@@ -41,4 +40,3 @@ header{background:#fff;border-bottom:1px solid var(--border)}
 footer{border-top:1px solid var(--border);background:#fff;padding:24px;text-align:center}
 footer a{color:var(--accent);text-decoration:none}
 footer a:hover{text-decoration:underline}
-</style>
