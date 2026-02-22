@@ -33,7 +33,21 @@
 </div>
 </footer>
 
-<script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD2HooEewAPq61UZOu3b1Q7-qKj_DQEP_Q",
+    authDomain: "gk-glove-reviews.firebaseapp.com",
+    projectId: "gk-glove-reviews",
+    storageBucket: "gk-glove-reviews.firebasestorage.app",
+    messagingSenderId: "185125807344",
+    appId: "1:185125807344:web:41279009166f47c3264e35"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 const gloves=[
 {id:1,brand:'Nike',model:'Vapor Grip 3',overall:4.6,grip:4.8,durability:4.5,comfort:4.5,price:89.99,palm_thickness:'5mm',latex_type:'Synthetic',closure:'Rolled Cuff',weight:'180g',use_cases:['Wet Weather','Training','Match Play'],description:'The Nike Vapor Grip 3 offers excellent grip and comfort for dynamic keepers. Soft palm material provides natural ball feel with reliable contact in wet conditions.',pros:['Excellent grip retention','Comfortable fit','Good durability','Value for money'],cons:['Can compress over time','Latex may wear quickly in training']},
 {id:2,brand:'Adidas',model:'Predator Pro',overall:4.2,grip:4.0,durability:4.3,comfort:4.2,price:94.99,palm_thickness:'4.5mm',latex_type:'Natural',closure:'Velcro Strap',weight:'175g',use_cases:['Match Play','Amateur'],description:'Professional-grade glove with natural latex for authentic grip feel. Designed for keepers who value touch and ball control.',pros:['Natural latex grip','Lightweight','Classic design'],cons:['Latex durability concerns','Lower grip in very wet conditions']},
@@ -178,9 +192,210 @@ ${glove.cons.map(c=>`<li>✗ ${c}</li>`).join('')}
 `;
 
 document.getElementById('gloveDetail').innerHTML=detailHtml;
+
+// Add review section after glove details
+const reviewSection = document.createElement('div');
+reviewSection.className = 'reviews-section';
+reviewSection.innerHTML = `
+<h2>User Reviews & Ratings</h2>
+
+<div class='review-form' id='reviewForm'>
+  <h3>Leave a Review</h3>
+  <form onsubmit="event.preventDefault(); submitReview(${id}, '${glove.brand} ${glove.model}');">
+    <div class='form-group'>
+      <label>Your Name (optional)</label>
+      <input type='text' id='userName' placeholder='Anonymous'>
+    </div>
+    
+    <div class='rating-group'>
+      <div class='form-group'>
+        <label>Overall Rating *</label>
+        <select id='overallRating' required>
+          <option value=''>Select...</option>
+          <option value='1'>1 Star</option>
+          <option value='2'>2 Stars</option>
+          <option value='3'>3 Stars</option>
+          <option value='4'>4 Stars</option>
+          <option value='5'>5 Stars</option>
+        </select>
+      </div>
+      <div class='form-group'>
+        <label>Grip Rating *</label>
+        <select id='gripRating' required>
+          <option value=''>Select...</option>
+          <option value='1'>1 Star</option>
+          <option value='2'>2 Stars</option>
+          <option value='3'>3 Stars</option>
+          <option value='4'>4 Stars</option>
+          <option value='5'>5 Stars</option>
+        </select>
+      </div>
+      <div class='form-group'>
+        <label>Durability Rating *</label>
+        <select id='durabilityRating' required>
+          <option value=''>Select...</option>
+          <option value='1'>1 Star</option>
+          <option value='2'>2 Stars</option>
+          <option value='3'>3 Stars</option>
+          <option value='4'>4 Stars</option>
+          <option value='5'>5 Stars</option>
+        </select>
+      </div>
+      <div class='form-group'>
+        <label>Comfort Rating *</label>
+        <select id='comfortRating' required>
+          <option value=''>Select...</option>
+          <option value='1'>1 Star</option>
+          <option value='2'>2 Stars</option>
+          <option value='3'>3 Stars</option>
+          <option value='4'>4 Stars</option>
+          <option value='5'>5 Stars</option>
+        </select>
+      </div>
+    </div>
+
+    <div class='form-group'>
+      <label>Your Review (optional)</label>
+      <textarea id='reviewText' placeholder='Share your thoughts about this glove...'></textarea>
+    </div>
+
+    <button type='submit' class='submit-btn'>Submit Review</button>
+  </form>
+</div>
+
+<div id='reviewsSection'></div>
+`;
+
+document.querySelector('.content').appendChild(reviewSection);
+
+  // Load reviews after rendering glove details
+  setTimeout(() => loadReviews(id), 100);
 }
 
 init();
+
+// Load and display reviews
+async function loadReviews(gloveId) {
+  const reviewsDiv = document.getElementById('reviewsSection');
+  if (!reviewsDiv) return;
+  
+  try {
+    const q = query(collection(db, 'reviews'), where('gloveId', '==', parseInt(gloveId)));
+    const snapshot = await getDocs(q);
+    const reviews = [];
+    snapshot.forEach(doc => {
+      reviews.push({id: doc.id, ...doc.data()});
+    });
+    
+    reviews.sort((a, b) => (b.timestamp?.toDate?.() || 0) - (a.timestamp?.toDate?.() || 0));
+    
+    if (reviews.length === 0) {
+      reviewsDiv.innerHTML = '<p style="color:var(--muted)">No reviews yet. Be the first to review!</p>';
+      return;
+    }
+
+    const avgOverall = (reviews.reduce((s, r) => s + (r.overall || 0), 0) / reviews.length).toFixed(1);
+    const avgGrip = (reviews.reduce((s, r) => s + (r.grip || 0), 0) / reviews.length).toFixed(1);
+    const avgDurability = (reviews.reduce((s, r) => s + (r.durability || 0), 0) / reviews.length).toFixed(1);
+    const avgComfort = (reviews.reduce((s, r) => s + (r.comfort || 0), 0) / reviews.length).toFixed(1);
+
+    let html = `
+    <div class='reviews-summary'>
+      <h3>User Ratings Summary</h3>
+      <div class='avg-ratings'>
+        <div class='avg-item'>
+          <span>Overall</span>
+          <strong>${renderStars(parseFloat(avgOverall))} ${avgOverall}</strong>
+          <span style='font-size:12px;color:var(--muted)'>from ${reviews.length} reviews</span>
+        </div>
+        <div class='avg-item'>
+          <span>Grip</span>
+          <strong>${renderStars(parseFloat(avgGrip))} ${avgGrip}</strong>
+        </div>
+        <div class='avg-item'>
+          <span>Durability</span>
+          <strong>${renderStars(parseFloat(avgDurability))} ${avgDurability}</strong>
+        </div>
+        <div class='avg-item'>
+          <span>Comfort</span>
+          <strong>${renderStars(parseFloat(avgComfort))} ${avgComfort}</strong>
+        </div>
+      </div>
+    </div>
+    `;
+
+    html += '<div class="reviews-list">';
+    reviews.forEach(r => {
+      const date = r.timestamp?.toDate?.() ? new Date(r.timestamp.toDate()).toLocaleDateString() : 'Recently';
+      html += `
+      <div class='review-item'>
+        <div class='review-header'>
+          <div>
+            <strong>${r.userName || 'Anonymous'}</strong>
+            <span style='color:var(--muted);font-size:12px'>${date}</span>
+          </div>
+          <div class='review-ratings'>
+            <span>${r.overall || 0}★ overall</span>
+          </div>
+        </div>
+        <div class='review-specs'>
+          <span>Grip: ${renderStars(r.grip || 0)} ${r.grip || 0}</span>
+          <span>Durability: ${renderStars(r.durability || 0)} ${r.durability || 0}</span>
+          <span>Comfort: ${renderStars(r.comfort || 0)} ${r.comfort || 0}</span>
+        </div>
+        ${r.reviewText ? `<p class='review-text'>${r.reviewText}</p>` : ''}
+      </div>
+      `;
+    });
+    html += '</div>';
+    
+    reviewsDiv.innerHTML = html;
+  } catch (error) {
+    console.error('Error loading reviews:', error);
+  }
+}
+
+// Submit review
+async function submitReview(gloveId, gloveName) {
+  const form = document.getElementById('reviewForm');
+  if (!form) return;
+  
+  const userName = document.getElementById('userName').value || 'Anonymous';
+  const overall = parseInt(document.getElementById('overallRating').value);
+  const grip = parseInt(document.getElementById('gripRating').value);
+  const durability = parseInt(document.getElementById('durabilityRating').value);
+  const comfort = parseInt(document.getElementById('comfortRating').value);
+  const reviewText = document.getElementById('reviewText').value;
+
+  if (!overall || !grip || !durability || !comfort) {
+    alert('Please rate all categories');
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, 'reviews'), {
+      gloveId: parseInt(gloveId),
+      gloveName: gloveName,
+      userName: userName,
+      overall: overall,
+      grip: grip,
+      durability: durability,
+      comfort: comfort,
+      reviewText: reviewText,
+      timestamp: serverTimestamp()
+    });
+    
+    form.reset();
+    alert('Review submitted! Thank you!');
+    loadReviews(gloveId);
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    alert('Error submitting review');
+  }
+}
+
+// Global function for review submission
+window.submitReview = submitReview;
 </script>
 
 <style>
@@ -229,9 +444,40 @@ init();
 .actions{display:flex;gap:12px}
 .actions .btn{flex:1;text-align:center;padding:16px 22px}
 
+.reviews-section{margin-top:40px}
+.reviews-section h2{margin:0 0 24px 0;font-size:24px}
+
+.review-form{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:32px}
+.review-form h3{margin:0 0 16px 0;font-size:18px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-weight:600;margin-bottom:8px;font-size:14px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text)}
+.form-group textarea{resize:vertical;min-height:100px}
+.rating-group{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.rating-group .form-group{margin-bottom:0}
+.submit-btn{background:var(--accent);color:#fff;padding:12px 24px;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px;margin-top:8px}
+.submit-btn:hover{opacity:0.9}
+
+.reviews-summary{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:24px}
+.reviews-summary h3{margin:0 0 16px 0;font-size:18px}
+.avg-ratings{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+.avg-item{background:var(--bg);padding:12px;border-radius:8px;text-align:center}
+.avg-item span{color:var(--muted);font-size:12px;display:block}
+.avg-item strong{color:var(--accent);font-size:16px;display:block;margin:4px 0}
+
+.reviews-list{display:flex;flex-direction:column;gap:16px}
+.review-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.review-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.review-header strong{color:var(--text);font-size:14px;display:block}
+.review-header span{color:var(--muted);font-size:12px;margin-top:2px;display:block}
+.review-ratings{text-align:right;font-weight:600;color:var(--accent);font-size:14px}
+.review-specs{display:flex;gap:12px;margin-bottom:12px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.review-text{color:var(--text);line-height:1.6;margin:0;padding-top:8px}
+
 @media(max-width:900px){
 .detail-grid{grid-template-columns:1fr;gap:24px}
 .pros-cons{grid-template-columns:1fr}
+.rating-group{grid-template-columns:1fr}
 }
 </style>
 </body>
